@@ -50,6 +50,8 @@
     <Compile Include="ImageRepository.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Action.cs" />
+    <Compile Include="OnDialogChangeHandler.cs" />
+    <Compile Include="OnHealthChangeHandler.cs" />
     <Compile Include="OnMoodChangeHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

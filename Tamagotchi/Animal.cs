@@ -52,7 +52,8 @@ namespace Tamagotchi {
 
         private void SetMood(Mood mood) {
 			if (mood != Mood) {
-				OnMoodChange(mood);
+				OnMoodChange(mood, images[mood]);
+				OnDialogChange(dialogs[mood]);
 			}
             Mood = mood;
         }
@@ -61,6 +62,7 @@ namespace Tamagotchi {
             Health += healthIncrease;
             Health = Math.Min(100, Health);
             Health = Math.Max(0, Health);
+	        OnHealthChange(Health);			
 			if (moodStabilityCounter > 0) {
 				return;
 			}
@@ -105,9 +107,7 @@ namespace Tamagotchi {
         }
 
         private void Kill() {
-			ActionPerformed();
             AddHealth(-100);
-            SetMood(Mood.Dead);
         }
 
         private void Kick() {
@@ -128,10 +128,6 @@ namespace Tamagotchi {
             SetMood(Mood.Full);
         }
 
-        public void SetDrawer(ImageDrawer drawer) {
-	        OnMoodChange += mood => drawer.Draw(images[mood]);
-        }
-
         public void DegradeHealth() {
             AddHealth(-1);
 	        moodStabilityCounter--;
@@ -141,14 +137,8 @@ namespace Tamagotchi {
             actions[action](this);
         }
 
-        public void WriteMood(WriteMood writer) {
-            writer(dialogs[Mood]);
-        }
-
-        public void WriteHealth(WriteHealth writer) {
-            writer(Health);
-        }
-
-		private event OnMoodChangeHandler OnMoodChange;
+	    public event OnMoodChangeHandler OnMoodChange;
+	    public event OnHealthChangeHandler OnHealthChange;
+	    public event OnDialogChangeHandler OnDialogChange;
     }
 }

@@ -23,12 +23,14 @@ namespace Tamagotchi {
                     var action = menu.GetAction(Console.ReadKey(true));
                     animal.PerformAction(action);
                 }
-	            
+				Console.Beep();
+
                 animal.DegradeHealth();                
                 Thread.Sleep(400);
             } while (!animal.IsDead);
 
-            Console.ReadKey();
+			Console.Beep(1000, 5000);
+	        Console.ReadKey();
         }
     }
 }

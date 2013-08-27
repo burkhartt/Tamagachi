@@ -23,7 +23,7 @@ namespace Tamagotchi {
         }
 
         public Action GetAction(ConsoleKeyInfo key) {
-            var numberPressed = (int)key.KeyChar - 48;
+            var numberPressed = key.KeyChar - 48;
             if (numberPressed <= 0 || numberPressed >= 10) {
                 return Action.Kill;
             }

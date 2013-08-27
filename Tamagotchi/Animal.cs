@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace Tamagotchi {
     internal class Animal {
@@ -25,9 +26,18 @@ namespace Tamagotchi {
             {Mood.Hurt, "I am feeling hurt :'-("}
         };
 
-        private readonly IDictionary<Mood, Bitmap> images;
+		private readonly Dictionary<Predicate<int>, Action<Animal>> moodRules = new Dictionary<Predicate<int>, Action<Animal>> {
+			{ (x => x == 0), animal => animal.SetMood(Mood.Dead) },
+			{ (x => x > 0 && x < 40), animal => animal.SetMood(Mood.Depressed) },
+			{ (x => x >= 40 && x < 60), animal => animal.SetMood(Mood.Hurt)},
+			{ (x => x >= 60 && x < 80), animal => animal.SetMood(Mood.Happy)},
+			{ (x => x >= 80), animal => animal.SetMood(Mood.Excited)}
+		};
 
-        public Animal(IDictionary<Mood, Bitmap> images) {
+        private readonly IDictionary<Mood, Bitmap> images;
+	    private int moodStabilityCounter;
+
+	    public Animal(IDictionary<Mood, Bitmap> images) {
             this.images = images;
             Health = 100;
             Mood = Mood.Happy;
@@ -40,68 +50,91 @@ namespace Tamagotchi {
             get { return Health <= 0; }
         }
 
-        private void SetStatus(Mood mood) {
+        private void SetMood(Mood mood) {
+			if (mood != Mood) {
+				OnMoodChange(mood);
+			}
             Mood = mood;
         }
 
         private void AddHealth(int healthIncrease) {
             Health += healthIncrease;
             Health = Math.Min(100, Health);
-            Health = Math.Max(1, Health);
+            Health = Math.Max(0, Health);
+			if (moodStabilityCounter > 0) {
+				return;
+			}
+
+			foreach (var rule in moodRules.Where(rule => rule.Key.Invoke(Health))) {
+				rule.Value(this);
+			}
         }
 
         private void Yell() {
+	        ActionPerformed();
             AddHealth(-15);
-            Health = Health - 15;
-            SetStatus(Mood.Depressed);
+            SetMood(Mood.Depressed);
         }
 
-        private void Water() {
+	    private void ActionPerformed() {
+		    moodStabilityCounter = 5;
+	    }
+
+	    private void Water() {
+			ActionPerformed();
             AddHealth(30);
-            SetStatus(Mood.Full);
+            SetMood(Mood.Full);
         }
 
         private void Scold() {
+			ActionPerformed();
             AddHealth(-5);
-            SetStatus(Mood.Depressed);
+            SetMood(Mood.Depressed);
         }
 
         private void Pet() {
+			ActionPerformed();
             AddHealth(5);
-            SetStatus(Mood.Happy);
+            SetMood(Mood.Happy);
         }
 
         private void Kiss() {
+			ActionPerformed();
             AddHealth(100);
-            SetStatus(Mood.Excited);
+            SetMood(Mood.Excited);
         }
 
         private void Kill() {
+			ActionPerformed();
             AddHealth(-100);
-            SetStatus(Mood.Dead);
+            SetMood(Mood.Dead);
         }
 
         private void Kick() {
+			ActionPerformed();
             AddHealth(-10);
-            SetStatus(Mood.Hurt);
+            SetMood(Mood.Hurt);
         }
 
         private void Hug() {
+			ActionPerformed();
             AddHealth(10);
-            SetStatus(Mood.Happy);
+            SetMood(Mood.Happy);
         }
 
         private void Feed() {
+			ActionPerformed();
             AddHealth(25);
-            SetStatus(Mood.Full);
+            SetMood(Mood.Full);
         }
 
-        public void Draw(ImageDrawer imageDrawer) {
-            imageDrawer.Draw(images[Mood]);
+        public void SetDrawer(ImageDrawer drawer) {
+	        OnMoodChange += mood => drawer.Draw(images[mood]);
         }
 
         public void DegradeHealth() {
-            Health--;
+            AddHealth(-1);
+	        moodStabilityCounter--;
         }
 
         public void PerformAction(Action action) {
@@ -115,5 +148,7 @@ namespace Tamagotchi {
         public void WriteHealth(WriteHealth writer) {
             writer(Health);
         }
+
+		private event OnMoodChangeHandler OnMoodChange;
     }
 }

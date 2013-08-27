@@ -6,11 +6,11 @@ namespace Tamagotchi {
         public static void WriteAnimal(Color pixel, int x, int y) {
             Console.SetCursorPosition(x, y);
             Console.ForegroundColor = ClosestConsoleColor(pixel.R, pixel.G, pixel.B);
-            Console.Write("#");
+			Console.Write("█");
         }
 
         public static void WriteMenu(int option, string title) {
-            Console.SetCursorPosition(55, 3 + option);
+            Console.SetCursorPosition(55, 53 + option);
             Console.WriteLine("{0}. {1}", option, title);
         }
 

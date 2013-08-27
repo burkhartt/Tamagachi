@@ -14,6 +14,24 @@ namespace Tamagotchi {
             Console.WriteLine("{0}. {1}", option, title);
         }
 
+        public static void WriteMood(string mood) {
+            Console.SetCursorPosition(1, 52);
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("                                                                                  ");
+            Console.SetCursorPosition(1, 52);
+            Console.WriteLine(mood);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void WriteHealth(int health) {
+            Console.SetCursorPosition(1, 50);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("                                                                                  ");
+            Console.SetCursorPosition(1, 50);
+            Console.WriteLine("Health: {0}%", health);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
         private static ConsoleColor ClosestConsoleColor(byte r, byte g, byte b) {
             ConsoleColor ret = 0;
             double rr = r, gg = g, bb = b, delta = Double.MaxValue;
@@ -30,6 +48,6 @@ namespace Tamagotchi {
                 }
             }
             return ret;
-        }
+        }        
     }
 }

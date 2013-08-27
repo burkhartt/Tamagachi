@@ -4,8 +4,6 @@ using System.Drawing;
 
 namespace Tamagotchi {
     internal class Animal {
-        private readonly IDictionary<Status, Bitmap> images;
-
         private readonly Dictionary<Action, Action<Animal>> actions = new Dictionary<Action, Action<Animal>> {
             {Action.Feed, animal => animal.Feed()},
             {Action.Hug, animal => animal.Hug()},
@@ -18,61 +16,88 @@ namespace Tamagotchi {
             {Action.Yell, animal => animal.Yell()}
         };
 
+        private readonly Dictionary<Mood, string> dialogs = new Dictionary<Mood, string> {
+            {Mood.Dead, "XXXXXXXXXXXXXXXX"},
+            {Mood.Depressed, "I hate the world..."},
+            {Mood.Excited, "YAY!!! I feel loved!!!"},
+            {Mood.Full, "Whew, I am full :-)"},
+            {Mood.Happy, "I'm really content right now"},
+            {Mood.Hurt, "I am feeling hurt :'-("}
+        };
+
+        private readonly IDictionary<Mood, Bitmap> images;
+
+        public Animal(IDictionary<Mood, Bitmap> images) {
+            this.images = images;
+            Health = 100;
+            Mood = Mood.Happy;
+        }
+
+        private Mood Mood { get; set; }
+        private int Health { get; set; }
+
+        public bool IsDead {
+            get { return Health <= 0; }
+        }
+
+        private void SetStatus(Mood mood) {
+            Mood = mood;
+        }
+
+        private void AddHealth(int healthIncrease) {
+            Health += healthIncrease;
+            Health = Math.Min(100, Health);
+            Health = Math.Max(1, Health);
+        }
+
         private void Yell() {
+            AddHealth(-15);
             Health = Health - 15;
+            SetStatus(Mood.Depressed);
         }
 
         private void Water() {
-            Health = Health + 30;
+            AddHealth(30);
+            SetStatus(Mood.Full);
         }
 
         private void Scold() {
-            Health = Health - 5;
+            AddHealth(-5);
+            SetStatus(Mood.Depressed);
         }
 
         private void Pet() {
-            Health = Health + 5;
+            AddHealth(5);
+            SetStatus(Mood.Happy);
         }
 
         private void Kiss() {
-            Health = 100;
+            AddHealth(100);
+            SetStatus(Mood.Excited);
         }
 
         private void Kill() {
-            Health = 0;
+            AddHealth(-100);
+            SetStatus(Mood.Dead);
         }
 
         private void Kick() {
-            Health = Health - 10;
+            AddHealth(-10);
+            SetStatus(Mood.Hurt);
         }
 
         private void Hug() {
-            Health = Health + 10;
+            AddHealth(10);
+            SetStatus(Mood.Happy);
         }
 
         private void Feed() {
-            Health = Health + 25;
+            AddHealth(25);
+            SetStatus(Mood.Full);
         }
-
-        public Animal(IDictionary<Status, Bitmap> images) {
-            this.images = images;
-            Health = 100;
-        }
-
-        private int Health { get; set; }
-
-        public bool IsDead { get { return Health <= 0; } }
 
         public void Draw(ImageDrawer imageDrawer) {
-            if (IsDead) {
-                imageDrawer.Draw(images[Status.Dead]);
-                return;
-            }
-            if (Health < 80) {
-                imageDrawer.Draw(images[Status.Sad]);
-                return;
-            }
-            imageDrawer.Draw(images[Status.Happy]);
+            imageDrawer.Draw(images[Mood]);
         }
 
         public void DegradeHealth() {
@@ -81,6 +106,14 @@ namespace Tamagotchi {
 
         public void PerformAction(Action action) {
             actions[action](this);
+        }
+
+        public void WriteMood(WriteMood writer) {
+            writer(dialogs[Mood]);
+        }
+
+        public void WriteHealth(WriteHealth writer) {
+            writer(Health);
         }
     }
 }

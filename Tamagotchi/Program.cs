@@ -7,6 +7,7 @@ namespace Tamagotchi {
             var imageRepository = new ImageRepository();
             var images = imageRepository.GetImages();
             var animal = new Animal(images);
+            
             var menu = new Menu();
             menu.Draw(ConsoleWriter.WriteMenu);
 
@@ -17,7 +18,9 @@ namespace Tamagotchi {
                 }
 
                 animal.DegradeHealth();
-                animal.Draw(new ImageDrawer(ConsoleWriter.WriteAnimal));                
+                animal.Draw(new ImageDrawer(ConsoleWriter.WriteAnimal));
+                animal.WriteMood(ConsoleWriter.WriteMood);
+                animal.WriteHealth(ConsoleWriter.WriteHealth);
                 Thread.Sleep(20);
             } while (!animal.IsDead);
 

@@ -26,8 +26,6 @@ namespace Tamagotchi {
 			{Mood.Hurt, "I am feeling hurt :'-("}
 		};
 
-		private readonly IDictionary<Mood, Bitmap> images;
-
 		private readonly Dictionary<Predicate<int>, Action<Animal>> moodRules = new Dictionary<Predicate<int>, Action<Animal>> {
 			{(x => x == 0), animal => animal.SetMood(Mood.Dead)},
 			{(x => x > 0 && x < 40), animal => animal.SetMood(Mood.Depressed)},
@@ -38,8 +36,7 @@ namespace Tamagotchi {
 
 		private int moodStabilityCounter;
 
-		public Animal(IDictionary<Mood, Bitmap> images) {
-			this.images = images;
+		public Animal() {
 			Health = 100;
 			Mood = Mood.Happy;
 		}
@@ -53,7 +50,7 @@ namespace Tamagotchi {
 
 		private void SetMood(Mood mood) {
 			if (mood != Mood) {
-				OnMoodChange(mood, images[mood]);
+				OnMoodChange(mood);
 				OnDialogChange(dialogs[mood]);
 			}
 			Mood = mood;

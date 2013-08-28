@@ -4,16 +4,18 @@ using System.Drawing.Drawing2D;
 
 namespace Tamagotchi {
     internal class ImageRepository {
-        public IDictionary<Mood, Bitmap> GetImages() {
-            var images = new Dictionary<Mood, Bitmap> {
-                {Mood.Happy, ResizeImage(Image.FromFile(@"C:\Users\Tim.Burkhart\Pictures\panda.gif"), 80, 50)},
-                {Mood.Excited, ResizeImage(Image.FromFile(@"C:\Users\Tim.Burkhart\Pictures\excitedpanda.jpg"), 80, 50)},
-                {Mood.Full, ResizeImage(Image.FromFile(@"C:\Users\Tim.Burkhart\Pictures\fullpanda.jpg"), 80, 50)},
-                {Mood.Hurt, ResizeImage(Image.FromFile(@"C:\Users\Tim.Burkhart\Pictures\sadpanda.jpg"), 80, 50)},
-                {Mood.Depressed, ResizeImage(Image.FromFile(@"C:\Users\Tim.Burkhart\Pictures\depressedpanda.jpg"), 80, 50)},
-                {Mood.Dead, ResizeImage(Image.FromFile(@"C:\Users\Tim.Burkhart\Pictures\deadpanda.png"), 80, 50)}
-            };
+        private static readonly string Path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Images";
 
+        private readonly Dictionary<Mood, Bitmap> images = new Dictionary<Mood, Bitmap> {
+                {Mood.Happy, ResizeImage(Image.FromFile(Path + @"\happypanda.gif"), 80, 50)},
+                {Mood.Excited, ResizeImage(Image.FromFile(Path + @"\excitedpanda.jpg"), 80, 50)},
+                {Mood.Full, ResizeImage(Image.FromFile(Path + @"\fullpanda.jpg"), 80, 50)},
+                {Mood.Hurt, ResizeImage(Image.FromFile(Path + @"\sadpanda.jpg"), 80, 50)},
+                {Mood.Depressed, ResizeImage(Image.FromFile(Path + @"\depressedpanda.png"), 80, 50)},
+                {Mood.Dead, ResizeImage(Image.FromFile(Path + @"\deadpanda.jpg"), 80, 50)}
+            }; 
+
+        public IDictionary<Mood, Bitmap> GetImages() {
             return images;
         }
 
@@ -29,6 +31,10 @@ namespace Tamagotchi {
             }
 
             return result;
+        }
+
+        public Bitmap GetImage(Mood mood) {
+            return GetImages()[mood];
         }
     }
 }

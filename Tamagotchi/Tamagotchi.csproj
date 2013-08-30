@@ -48,6 +48,7 @@
     <Compile Include="DrawAnimal.cs" />
     <Compile Include="DrawMenu.cs" />
     <Compile Include="ImageRepository.cs" />
+    <Compile Include="ImageResizer.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Action.cs" />
     <Compile Include="OnDialogChangeHandler.cs" />

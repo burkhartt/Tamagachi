@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Drawing;
+using System.IO;
 using System.Threading;
 using ConsoleExtender;
 
@@ -7,10 +7,11 @@ namespace Tamagotchi {
     internal class Program {
         private static void Main() {          
 			var imageDrawer = new ImageDrawer(ConsoleWriter.WriteAnimal);
-            var imageRepository = new ImageRepository();
+            var baseImagePath = Path.Combine(Directory.GetCurrentDirectory(), "Images");
+            var imageRepository = new ImageRepository(baseImagePath);
 
             var animal = new Animal();
-			animal.OnMoodChange += mood => imageDrawer.Draw(imageRepository.GetImage(mood));
+			animal.OnMoodChange += mood => imageDrawer.Draw(imageRepository.GetImage(mood).ResizeTo(80, 50));
 	        animal.OnHealthChange += ConsoleWriter.WriteHealth;
 	        animal.OnDialogChange += ConsoleWriter.WriteMood;
 			
